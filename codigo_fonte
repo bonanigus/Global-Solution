@@ -1,0 +1,41 @@
+#include <Servo.h>
+#include <LiquidCrystal.h>
+
+Servo insulinPump;
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  // Pinos do display LCD
+
+int glucoseSensorPin = A0;
+int buttonPin = 7;
+int limiar = 150;  // Limiar de glicose para entrega de insulina (ajuste conforme necessário)
+
+void setup() {
+  insulinPump.attach(9);  // Pino de controle do servomotor
+  lcd.begin(16, 2);       // Inicializa o display LCD
+  pinMode(buttonPin, INPUT);
+}
+
+void loop() {
+  if (digitalRead(buttonPin) == HIGH) {
+    int glucoseLevel = analogRead(glucoseSensorPin);  // Leitura simulada da glicose
+    displayGlucoseLevel(glucoseLevel);
+
+    if (glucoseLevel > limiar) {
+      deliverInsulin();  // Simula a entrega de insulina
+    }
+
+    delay(1000);  // Aguarda 1 segundo antes de permitir uma nova leitura
+  }
+}
+
+void displayGlucoseLevel(int value) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Glicose: ");
+  lcd.print(value);
+}
+
+void deliverInsulin() {
+  insulinPump.write(90);   // Gira o servomotor para simular a entrega de insulina
+  delay(2000);             // Aguarda 2 segundos
+  insulinPump.write(0);    // Retorna o servomotor à posição inicial
+}
